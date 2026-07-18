@@ -307,12 +307,12 @@
       </div>
       <div class="search-wrap">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="m16.5 16.5 4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-        <input id="search" type="search" placeholder="搜索提示词…" autocomplete="off">
+        <input id="search" type="search" placeholder="搜索标题…" autocomplete="off">
         <span class="shortcut">/</span>
       </div>
       <p class="nav-label">Mind Map</p>
       <nav id="nav" class="nav"></nav>
-      <div class="sidebar-foot">离线可用 · 支持全文搜索<br>点击任意复制按钮即可取用</div>
+      <div class="sidebar-foot">离线可用 · 支持标题搜索<br>点击任意复制按钮即可取用</div>
     </aside>
 
     <main class="main">
@@ -460,7 +460,7 @@
     }
     function searchView(query) {
       const q = query.trim().toLowerCase();
-      const results = allItems.filter(item => `${item.title} ${item.prompt} ${item.group||""} ${item.tool||""}`.toLowerCase().includes(q));
+      const results = allItems.filter(item => item.title.toLowerCase().includes(q));
       currentSection = "search";
       document.getElementById("crumb").textContent = "搜索结果";
       if (!results.length) return `<section><p class="eyebrow">SEARCH</p><h2 class="hero-title" style="font-size:46px">“${escapeHTML(query)}”</h2><div class="empty" style="margin-top:34px"><strong>没有找到匹配内容</strong>换一个任务词试试，例如「头发」「去背景」「4K」或「下雪」。</div></section>`;
