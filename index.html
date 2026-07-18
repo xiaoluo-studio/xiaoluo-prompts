@@ -591,6 +591,58 @@
     .prompt-dialog-foot { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 16px 24px; border-top: 1px solid rgba(218,234,255,.1); background: rgba(5,12,23,.24); }
     .prompt-dialog-foot span { color: #718096; font-size: 10px; letter-spacing: .16em; text-transform: uppercase; }
 
+    /* 60Hz motion system — compositor-friendly transforms and opacity */
+    :root { --ease-fluid: cubic-bezier(.22,1,.36,1); --ease-press: cubic-bezier(.2,.8,.2,1); }
+    html { scroll-behavior: smooth; }
+    .content { view-transition-name: content-stage; }
+    @keyframes stage-out { to { opacity: 0; transform: translate3d(0,-9px,0) scale(.993); } }
+    @keyframes stage-in { from { opacity: 0; transform: translate3d(0,14px,0) scale(.992); } to { opacity: 1; transform: translate3d(0,0,0) scale(1); } }
+    ::view-transition-old(content-stage) { animation: stage-out 180ms cubic-bezier(.4,0,1,1) both; }
+    ::view-transition-new(content-stage) { animation: stage-in 460ms var(--ease-fluid) both; }
+    ::view-transition-group(content-stage) { animation-duration: 460ms; }
+
+    .button, .nav-btn, .map-node, .prompt-card, .copy-btn, .mobile-menu, .modal-close {
+      backface-visibility: hidden;
+      -webkit-font-smoothing: antialiased;
+      will-change: transform;
+    }
+    .button { transition: transform .34s var(--ease-fluid), border-color .28s ease, color .28s ease, box-shadow .34s var(--ease-fluid), background .28s ease; }
+    .button:hover { transform: translate3d(0,-2px,0) scale(1.012); }
+    .button:active { transform: translate3d(0,1px,0) scale(.965); transition-duration: 75ms; }
+    .nav-btn { transition: transform .34s var(--ease-fluid), color .26s ease, border-color .26s ease, background .26s ease, box-shadow .34s var(--ease-fluid); }
+    .nav-btn:hover { transform: translate3d(3px,0,0); }
+    .nav-btn:active { transform: translate3d(2px,0,0) scale(.975); transition-duration: 75ms; }
+    .map-node { transition: transform .44s var(--ease-fluid), border-color .3s ease, box-shadow .44s var(--ease-fluid), background .3s ease; }
+    .map-node:hover { transform: translate3d(0,-5px,0) scale(1.016); }
+    .map-node:active { transform: translate3d(0,1px,0) scale(.965); transition-duration: 90ms; }
+    .map-node.examples:hover { transform: translate3d(-50%,-5px,0) scale(1.016); }
+    .map-node.examples:active { transform: translate3d(-50%,1px,0) scale(.965); }
+    .prompt-card { transition: transform .42s var(--ease-fluid), border-color .3s ease, background .3s ease, box-shadow .42s var(--ease-fluid); transform: translateZ(0); }
+    .prompt-card:hover { transform: translate3d(0,-3px,0) scale(1.004); }
+    .one-click-card:hover { transform: translate3d(0,-2px,0) scale(1.008); }
+    .one-click-card:active { transform: translate3d(0,1px,0) scale(.968); transition-duration: 80ms; }
+    .copy-btn { transition: transform .3s var(--ease-fluid), color .24s ease, border-color .24s ease, background .24s ease; }
+    .copy-btn:hover { transform: scale(1.08); }
+    .copy-btn:active { transform: scale(.88); transition-duration: 70ms; }
+    .example-image img { transition: transform .7s var(--ease-fluid); will-change: transform; }
+    .example-card:hover .example-image img { transform: scale(1.045); }
+
+    .prompt-modal { transition: opacity .3s ease, visibility 0s linear .34s; }
+    .prompt-modal.show { transition-delay: 0s; }
+    .prompt-modal-backdrop { opacity: 0; transition: opacity .38s ease; }
+    .prompt-modal.show .prompt-modal-backdrop { opacity: 1; }
+    .prompt-dialog { opacity: 0; transform: translate3d(0,24px,0) scale(.94); transition: transform .52s var(--ease-fluid), opacity .26s ease; will-change: transform, opacity; }
+    .prompt-modal.show .prompt-dialog { opacity: 1; transform: translate3d(0,0,0) scale(1); }
+    .modal-close { transition: transform .3s var(--ease-fluid), color .24s ease, background .24s ease; }
+    .modal-close:hover { transform: rotate(4deg) scale(1.06); }
+    .modal-close:active { transform: scale(.88); transition-duration: 70ms; }
+    .toast { transition: opacity .3s ease, transform .42s var(--ease-fluid); }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+
     @media (max-width: 1180px) {
       .hero-compact { align-items: flex-start; flex-direction: column; gap: 14px; }
       .stats { width: 100%; max-width: none; flex-basis: auto; }
@@ -608,6 +660,8 @@
       .map-node { min-height: 94px; }
       .one-click-grid { grid-template-columns: 1fr; }
       .one-click-section .section-head { align-items: flex-start; }
+      .map-node:hover, .map-node.examples:hover { transform: translate3d(0,-4px,0) scale(1.01); }
+      .map-node:active, .map-node.examples:active { transform: translate3d(0,1px,0) scale(.965); }
       .prompt-modal { padding: 13px; }
       .prompt-dialog { max-height: 86vh; border-radius: 22px; }
       .prompt-dialog-head, .modal-prompt { padding-left: 19px; padding-right: 19px; }
@@ -683,6 +737,8 @@
     let currentSection = "overview";
     let toastTimer;
     let modalReturnFocus = null;
+    let firstRender = true;
+    let stageAnimation = null;
 
     const escapeHTML = value => String(value ?? "").replace(/[&<>'"]/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[char]));
     function navHTML() {
@@ -825,15 +881,32 @@
       if (!results.length) return `<section><p class="eyebrow">SEARCH</p><h2 class="hero-title" style="font-size:46px">“${escapeHTML(query)}”</h2><div class="empty" style="margin-top:34px"><strong>没有找到匹配内容</strong>换一个任务词试试，例如「头发」「去背景」「4K」或「下雪」。</div></section>`;
       return `<section><p class="eyebrow">SEARCH</p><h2 class="hero-title" style="font-size:46px">“${escapeHTML(query)}”</h2><p class="search-summary">找到 ${results.length} 个相关节点</p><div class="search-results">${results.map(item=>item.section==="oneClick"?compactOneClickCard(item):card(item,{tag:sectionMeta[item.section].name})).join("")}</div></section>`;
     }
+    function animateStage(content) {
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      if (stageAnimation) stageAnimation.cancel();
+      stageAnimation = content.animate([
+        { opacity: .12, transform: "translate3d(0,14px,0) scale(.992)" },
+        { opacity: 1, transform: "translate3d(0,0,0) scale(1)" }
+      ], { duration: 460, easing: "cubic-bezier(.22,1,.36,1)", fill: "both" });
+      stageAnimation.finished.catch(() => {}).finally(() => { stageAnimation = null; });
+    }
     function render(section=currentSection) {
       const query = document.getElementById("search").value;
       const content = document.getElementById("content");
-      if (query.trim()) content.innerHTML = searchView(query);
-      else {
-        currentSection = section === "search" ? "overview" : section;
-        content.innerHTML = currentSection === "overview" ? overview() : currentSection === "formula" ? formulaView() : currentSection === "oneClick" ? oneClickView() : currentSection === "examples" ? examplesView() : workflowView(currentSection);
-      }
-      updateNav(); window.scrollTo({top:0,behavior:"smooth"});
+      const update = () => {
+        if (query.trim()) content.innerHTML = searchView(query);
+        else {
+          currentSection = section === "search" ? "overview" : section;
+          content.innerHTML = currentSection === "overview" ? overview() : currentSection === "formula" ? formulaView() : currentSection === "oneClick" ? oneClickView() : currentSection === "examples" ? examplesView() : workflowView(currentSection);
+        }
+        updateNav();
+        window.scrollTo({top:0, behavior:firstRender ? "auto" : "smooth"});
+      };
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const useViewTransition = !firstRender && !query.trim() && !reducedMotion && typeof document.startViewTransition === "function";
+      if (useViewTransition) document.startViewTransition(update);
+      else { update(); if (!firstRender && !reducedMotion) animateStage(content); }
+      firstRender = false;
     }
     function sectionText(section) {
       if (section === "formula") return DATA.formulaText;
