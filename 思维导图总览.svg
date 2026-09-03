@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000">
+  <defs>
+    <radialGradient id="bg"><stop stop-color="#171924"/><stop offset="1" stop-color="#090b11"/></radialGradient>
+    <radialGradient id="root"><stop stop-color="#322b21"/><stop offset="1" stop-color="#13151d"/></radialGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="18" stdDeviation="24" flood-opacity=".35"/></filter>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0H0V48" fill="none" stroke="#fff" stroke-opacity=".035"/></pattern>
+  </defs>
+  <rect width="1600" height="1000" fill="url(#bg)"/><rect width="1600" height="1000" fill="url(#grid)"/>
+  <text x="80" y="88" fill="#e5bd72" font-family="Arial,sans-serif" font-size="15" letter-spacing="4">XIAOLUO · COS POST-PRODUCTION</text>
+  <text x="80" y="146" fill="#f3efe8" font-family="Georgia,serif" font-size="45">小洛整理场照后期提示词合集</text>
+  <text x="80" y="183" fill="#858590" font-family="Arial,sans-serif" font-size="18">提示词架构 · 工作流 · 案例库 · COS 动作大全</text>
+  <g fill="none" stroke-width="2" opacity=".62">
+    <path d="M680 485C540 450 500 335 380 300" stroke="#e5bd72"/><path d="M675 550C520 590 480 700 350 735" stroke="#a790ff"/>
+    <path d="M920 485C1060 445 1100 335 1220 300" stroke="#65d6c5"/><path d="M925 550C1070 590 1120 700 1250 725" stroke="#ee9270"/>
+    <path d="M800 645V825" stroke="#e184ae"/>
+    <path d="M800 390V365" stroke="#78bff0"/>
+  </g>
+  <g filter="url(#shadow)">
+    <circle cx="800" cy="525" r="135" fill="url(#root)" stroke="#e5bd72" stroke-opacity=".5"/>
+    <circle cx="800" cy="525" r="151" fill="none" stroke="#e5bd72" stroke-opacity=".08" stroke-width="14"/>
+    <text x="800" y="485" text-anchor="middle" fill="#e5bd72" font-family="Arial,sans-serif" font-size="13" letter-spacing="3">CORE SYSTEM</text>
+    <text x="800" y="535" text-anchor="middle" fill="#f3efe8" font-family="Georgia,serif" font-size="32">小洛 COS</text>
+    <text x="800" y="578" text-anchor="middle" fill="#f3efe8" font-family="Georgia,serif" font-size="32">场照生成</text>
+    <text x="800" y="610" text-anchor="middle" fill="#858590" font-family="Arial,sans-serif" font-size="13">PROMPT WORKFLOW</text>
+  </g>
+  <g filter="url(#shadow)">
+      <rect x="120" y="230" width="360" height="145" rx="24" fill="#151823" stroke="#e5bd72" stroke-opacity=".34"/>
+      <text x="148" y="268" fill="#e5bd72" font-family="Georgia,serif" font-size="15">01</text>
+      <text x="452" y="268" text-anchor="end" fill="#676975" font-family="Arial,sans-serif" font-size="12">4 PARTS</text>
+      <text x="148" y="313" fill="#f3efe8" font-family="Arial,sans-serif" font-weight="600" font-size="22">万能提示词公式</text>
+      <text x="148" y="344" fill="#8e909d" font-family="Arial,sans-serif" font-size="14">前缀 × 主体 × 限定 × 后缀</text>
+    </g>
+<g filter="url(#shadow)">
+      <rect x="90" y="670" width="390" height="145" rx="24" fill="#151823" stroke="#a790ff" stroke-opacity=".34"/>
+      <text x="118" y="708" fill="#a790ff" font-family="Georgia,serif" font-size="15">02</text>
+      <text x="452" y="708" text-anchor="end" fill="#676975" font-family="Arial,sans-serif" font-size="12">100 ITEMS</text>
+      <text x="118" y="753" fill="#f3efe8" font-family="Arial,sans-serif" font-weight="600" font-size="22">一键精修提示词</text>
+      <text x="118" y="784" fill="#8e909d" font-family="Arial,sans-serif" font-size="14">12 类 COS 后期专业指令库</text>
+    </g>
+<g filter="url(#shadow)">
+      <rect x="1120" y="230" width="360" height="145" rx="24" fill="#151823" stroke="#65d6c5" stroke-opacity=".34"/>
+      <text x="1148" y="268" fill="#65d6c5" font-family="Georgia,serif" font-size="15">03</text>
+      <text x="1452" y="268" text-anchor="end" fill="#676975" font-family="Arial,sans-serif" font-size="12">4 STEPS</text>
+      <text x="1148" y="313" fill="#f3efe8" font-family="Arial,sans-serif" font-weight="600" font-size="22">半合成工作流</text>
+      <text x="1148" y="344" fill="#8e909d" font-family="Arial,sans-serif" font-size="14">保留骨架，逐层丰富场景</text>
+    </g>
+<g filter="url(#shadow)">
+      <rect x="1120" y="660" width="390" height="145" rx="24" fill="#151823" stroke="#ee9270" stroke-opacity=".34"/>
+      <text x="1148" y="698" fill="#ee9270" font-family="Georgia,serif" font-size="15">04</text>
+      <text x="1482" y="698" text-anchor="end" fill="#676975" font-family="Arial,sans-serif" font-size="12">5 STEPS</text>
+      <text x="1148" y="743" fill="#f3efe8" font-family="Arial,sans-serif" font-weight="600" font-size="22">全合成工作流</text>
+      <text x="1148" y="774" fill="#8e909d" font-family="Arial,sans-serif" font-size="14">构思 · 生成 · 特效 · 精修</text>
+    </g>
+<g filter="url(#shadow)">
+      <rect x="610" y="790" width="380" height="130" rx="24" fill="#151823" stroke="#e184ae" stroke-opacity=".34"/>
+      <text x="638" y="828" fill="#e184ae" font-family="Georgia,serif" font-size="15">05</text>
+      <text x="962" y="828" text-anchor="end" fill="#676975" font-family="Arial,sans-serif" font-size="12">17 CASES</text>
+      <text x="638" y="873" fill="#f3efe8" font-family="Arial,sans-serif" font-weight="600" font-size="22">使用示例图库</text>
+      <text x="638" y="904" fill="#8e909d" font-family="Arial,sans-serif" font-size="14">样片与完整提示词对照</text>
+    </g>
+<g filter="url(#shadow)">
+      <rect x="610" y="220" width="380" height="145" rx="24" fill="#151823" stroke="#78bff0" stroke-opacity=".34"/>
+      <text x="638" y="258" fill="#78bff0" font-family="Georgia,serif" font-size="15">06</text>
+      <text x="962" y="258" text-anchor="end" fill="#676975" font-family="Arial,sans-serif" font-size="12">POSE LIBRARY</text>
+      <text x="638" y="303" fill="#f3efe8" font-family="Arial,sans-serif" font-weight="600" font-size="22">COS 动作大全</text>
+      <text x="638" y="334" fill="#8e909d" font-family="Arial,sans-serif" font-size="14">动作 · 焦段 · 透视 · 打光</text>
+    </g>
+  <text x="80" y="944" fill="#666873" font-family="Arial,sans-serif" font-size="14">离线交互版包含标题搜索、一键复制、流程指引、17 张案例图与 COS 动作资料库</text>
+  <text x="1520" y="944" text-anchor="end" fill="#666873" font-family="Arial,sans-serif" font-size="14">2026</text>
+</svg>
