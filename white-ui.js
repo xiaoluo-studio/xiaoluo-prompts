@@ -113,7 +113,7 @@
     ];
     return `<section class="overview-screen home-overview">
       <div class="category-section home-category-section">
-        <div class="category-head"><h2>按分类浏览。<span>一步直达。</span></h2><p>大的分类保持不变，入口集中到页面上方，减少来回寻找。</p></div>
+        <div class="category-head"><h2>按分类浏览 <span>一步直达。</span></h2></div>
         <div class="category-shelf">${categories.map(categoryCard).join("")}</div>
       </div>
     </section>`;
@@ -150,6 +150,14 @@
   let lastSection = currentSection === "search" ? "overview" : currentSection;
   const decorateNavigation = () => {
     document.querySelectorAll('[data-section="poses"], [data-section-jump="poses"]').forEach(node => node.remove());
+    const brand = document.querySelector(".brand");
+    if (brand) {
+      brand.dataset.sectionJump = "overview";
+      brand.setAttribute("role", "button");
+      brand.setAttribute("tabindex", "0");
+      brand.setAttribute("aria-label", "返回首页");
+      brand.title = "返回首页";
+    }
     const home = document.querySelector('.nav-btn[data-section="overview"]');
     if (home) {
       home.innerHTML = `${HOME_ICON}<span class="nav-name">首页</span>`;
@@ -214,6 +222,12 @@
   });
 
   document.addEventListener("keydown", event => {
+    const brandHome = event.target.closest?.('.brand[data-section-jump="overview"]');
+    if (brandHome && (event.key === "Enter" || event.key === " ")) {
+      event.preventDefault();
+      brandHome.click();
+      return;
+    }
     const focusSearch = event.target.closest?.("[data-focus-search]");
     if (focusSearch && (event.key === "Enter" || event.key === " ")) {
       event.preventDefault();
