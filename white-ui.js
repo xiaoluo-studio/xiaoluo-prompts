@@ -111,9 +111,8 @@
       { key: "full", index: 3, title: "场照全合成流程", description: "从构思生成，到特效和最终精修", count: `5 阶段`, color: "#d85c31" },
       { key: "examples", index: 4, title: "使用示例图库", description: "样片、完整提示词与二维码案例", count: `${DATA.examples.length} 例`, color: "#c44178" }
     ];
-    return `<section class="overview-screen home-overview">
+    return `<section class="overview-screen home-overview" aria-label="提示词分类">
       <div class="category-section home-category-section">
-        <div class="category-head"><h2>按分类浏览 <span>一步直达。</span></h2></div>
         <div class="category-shelf">${categories.map(categoryCard).join("")}</div>
       </div>
     </section>`;
