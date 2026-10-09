@@ -5,7 +5,6 @@
   const escape = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
   const paths = {
     home:'<path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-6v-7h-4v7H4a1 1 0 0 1-1-1Z"/>',
-    formula:'<path d="M4 5h16M4 12h10M4 19h16"/><circle cx="19" cy="12" r="2.5"/>',
     oneClick:'<path d="m13 2 2.7 7.3L23 12l-7.3 2.7L13 22l-2.7-7.3L3 12l7.3-2.7L13 2Z"/><path d="M4 2v4M2 4h4"/>',
     half:'<rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/><path d="M11 7h4a3 3 0 0 1 3 3v3M13 17H9a3 3 0 0 1-3-3v-3"/>',
     full:'<circle cx="5" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><circle cx="19" cy="12" r="2"/><path d="M7 5h3l4 7h3M7 19h3l4-7"/>',
@@ -33,16 +32,15 @@
   const icon = name => `<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">${paths[name] || paths.oneClick}</svg>`;
   const sections = {
     home:{name:'首页',title:'提示词库',eyebrow:'PROMPT COLLECTION'},
-    formula:{name:'万能公式',title:'万能提示词公式',eyebrow:'01 / PROMPT FORMULA',description:'固定前缀、主体描述、镜头限定、质感后缀，组合成完整指令。'},
-    oneClick:{name:'一键精修',title:'一键精修提示词',eyebrow:'02 / RETOUCH LIBRARY',description:'从清理与修复，到光影与特效，按修图任务查找。'},
-    half:{name:'半合成流程',title:'场照半合成流程',eyebrow:'03 / SEMI-COMPOSITE',description:'保留场馆骨架，依次完成背景清理、场景添加、特效与高清修复。'},
-    full:{name:'全合成流程',title:'场照全合成流程',eyebrow:'04 / FULL COMPOSITE',description:'从无参考图构思开始，四步完成场景、特效、4K修复与头发精修。'},
-    examples:{name:'使用示例',title:'使用示例图库',eyebrow:'05 / CASE STUDIES',description:'查看成片与对应提示词，寻找适合当前作品的处理思路。'},
+    oneClick:{name:'一键提示词',title:'一键提示词',eyebrow:'01 / PROMPT LIBRARY',description:'从清理与修复，到光影与特效，按修图任务查找。'},
+    half:{name:'半合成流程',title:'场照半合成流程',eyebrow:'02 / SEMI-COMPOSITE',description:'保留场馆骨架，依次完成背景清理、场景添加、特效与高清修复。'},
+    full:{name:'全合成流程',title:'场照全合成流程',eyebrow:'03 / FULL COMPOSITE',description:'从无参考图构思开始，四步完成场景、特效、4K修复与头发精修。'},
+    examples:{name:'使用示例',title:'使用示例图库',eyebrow:'04 / CASE STUDIES',description:'查看成片与对应提示词，寻找适合当前作品的处理思路。'},
     search:{name:'搜索结果',title:'搜索结果',eyebrow:'SEARCH RESULTS'}
   };
   const groupIcons = {'清理与修复':'cleanup','画质与细节':'enhance','面部与妆容':'face','假发与发丝':'hair','服装与布料':'fabric','体态与肢体':'body','道具与材质':'prop','光影与融合':'light','场景与构图':'examples','氛围与天气':'weather','特效与能量':'oneClick','色彩与成片':'color'};
   const groups = Object.keys(groupIcons);
-  const contentSections = ['formula','oneClick','half','full','examples'];
+  const contentSections = ['oneClick','half','full','examples'];
   const items = contentSections.flatMap(section => data[section].map(item => ({...item,section})));
   const byId = new Map(items.map(item => [item.id,item]));
   const groupCount = name => data.oneClick.filter(item=>item.group===name).length;
@@ -61,7 +59,7 @@
   function routeParams(){return Object.fromEntries(route.params.entries());}
   function heading(page,action=''){
     const section=sections[page];
-    return `<div class="page-head"><div><p class="eyebrow">${section.eyebrow}</p><h2>${section.title}</h2>${section.description?`<p class="page-description">${section.description}</p>`:''}</div>${action}</div>`;
+    return `<div class="page-head section-head"><div><p class="eyebrow">${section.eyebrow}</p><h2>${section.title}</h2>${section.description?`<p class="page-description">${section.description}</p>`:''}</div>${action}</div>`;
   }
   function copyButton(item,label='复制'){
     return item.qr
@@ -69,7 +67,6 @@
       : `<button class="copy-small" data-copy="${item.id}" aria-label="复制${escape(item.title)}">${icon('copy')}${label}</button>`;
   }
   function itemIcon(item){
-    if(item.section==='formula') return ['lock','pen','camera','oneClick'][data.formula.findIndex(x=>x.id===item.id)];
     if(item.group)return groupIcons[item.group];
     if(/高清|降噪/.test(item.title))return 'enhance';
     if(/头发/.test(item.title))return 'hair';
@@ -89,23 +86,20 @@
     const start=token?Math.max(0,text.toLowerCase().indexOf(token.toLowerCase())-30):0;
     return (start?'…':'')+text.slice(start,start+190)+(text.length>start+190?'…':'');
   }
-  function promptCard(item,{query='',step=false}={}){
+  function promptCard(item,{query=''}={}){
     const title=item.variant || item.title;
-    return `<article class="prompt-card"><button class="prompt-open" data-open="${item.id}" aria-label="查看${escape(title)}完整提示词">${step?`<span class="step-label">${item.index} / ${['固定前缀','主体描述','镜头限定','质感后缀'][Number(item.index)-1]}</span>`:''}<div class="prompt-top"><span class="small-icon">${icon(itemIcon(item))}</span><h3>${highlight(step?item.title.split('·')[0].trim():title,query)}</h3></div><p class="prompt-preview">${highlight(snippet(item,query),query)}</p></button><div class="prompt-footer"><span class="prompt-tag">${escape(item.tool || item.group || sections[item.section].name)}</span>${copyButton(item)}</div></article>`;
+    return `<article class="prompt-card" data-section="${item.section}"><button class="prompt-open" data-open="${item.id}" aria-label="查看${escape(title)}完整提示词"><div class="prompt-top"><span class="small-icon">${icon(itemIcon(item))}</span><h3>${highlight(title,query)}</h3></div><p class="prompt-preview">${highlight(snippet(item,query),query)}</p></button><div class="prompt-footer"><span class="prompt-tag">${escape(item.tool || item.group || sections[item.section].name)}</span>${copyButton(item)}</div></article>`;
   }
   const quickTasks = () => ['背景杂物','头发','高清','光影','特效'].map(word=>`<a class="quick-link" href="${href('search',{q:word})}">${icon('search')}${word}</a>`).join('');
   function home(){
     const category=(key,title,description,count,extra='')=>`<article class="category category-${key}"><a class="category-main" href="#${key}" aria-label="打开${title}"><div class="category-top"><span class="category-icon">${icon(key)}</span><span class="category-count">${count}</span></div><h3>${title}</h3><p class="category-description">${description}</p><span class="category-arrow">${icon('arrow')}</span>${extra}</a></article>`;
-    return `<div class="page-head home-head"><h2 class="home-heading">提示词库</h2><span class="head-meta">100 条精修提示词 · 17 个示例</span></div><div class="quick-tasks"><span class="quick-label">常用任务</span>${quickTasks()}</div><section class="home-grid" aria-label="五个提示词分类"><article class="category category-featured"><a class="category-main" href="#oneClick" aria-label="打开一键精修提示词"><div class="category-top"><span class="category-icon">${icon('oneClick')}</span><span class="category-count">${data.oneClick.length} 条提示词 / ${groups.length} 个分类</span></div><h3>一键精修提示词</h3><p class="category-description">清理杂物，修整细节，完善光影。</p><span class="category-arrow">${icon('arrow')}</span></a><div class="category-shortcuts" aria-label="直达精修分类">${['清理与修复','假发与发丝','光影与融合','特效与能量'].map(group=>`<a class="category-shortcut" href="${href('oneClick',{group})}">${group}</a>`).join('')}</div></article>${category('formula','万能提示词公式','四段式结构，组织完整指令','4 个部分')}${category('half','场照半合成流程','保留场馆，逐层丰富场景','4 个步骤')}${category('full','场照全合成流程','从构思生成，到最终精修',`${data.full.length} 个步骤`)}${category('examples','使用示例图库','成片、提示词与二维码案例','17 个示例',`<span class="example-peek" aria-hidden="true"><img src="assets/example-02.jpg" alt="" width="43" height="58"><img src="assets/example-03.jpg" alt="" width="43" height="58"></span>`)}</section><p class="home-footnote">${icon('info')}点击提示词查看全文，复制后可直接使用。</p>`;
-  }
-  function formula(){
-    return heading('formula',`<button class="button primary" data-copy-all="formula">${icon('copy')}复制完整骨架</button>`)+`<div class="formula-strip" aria-label="提示词组成"><span>固定前缀</span><b>+</b><span>主体描述</span><b>+</b><span>镜头限定</span><b>+</b><span>质感后缀</span></div><div class="formula-grid">${data.formula.map(x=>promptCard(byId.get(x.id),{step:true})).join('')}</div><div class="formula-note"><p><strong>搭建你的完整指令</strong><br>复制骨架后，替换「主体 / 场景 / 特效需求」，再按作品调整镜头与质感。</p><a class="text-link" href="#examples">查看使用示例${icon('arrow')}</a></div>`;
+    return `<div class="page-head home-head"><h2 class="home-heading">提示词库</h2><span class="head-meta">${data.oneClick.length} 条提示词 · 17 个示例</span></div><div class="quick-tasks"><span class="quick-label">常用任务</span>${quickTasks()}</div><section class="home-grid" aria-label="四个提示词分类"><article class="category category-featured"><a class="category-main" href="#oneClick" aria-label="打开一键提示词"><div class="category-top"><span class="category-icon">${icon('oneClick')}</span><span class="category-count">${data.oneClick.length} 条提示词 / ${groups.length} 个分类</span></div><h3>一键提示词</h3><p class="category-description">清理杂物，修整细节，完善光影。</p><span class="category-arrow">${icon('arrow')}</span></a><div class="category-shortcuts" aria-label="直达提示词分类">${['清理与修复','假发与发丝','光影与融合','特效与能量'].map(group=>`<a class="category-shortcut" href="${href('oneClick',{group})}">${group}</a>`).join('')}</div></article>${category('half','场照半合成流程','保留场馆，逐层丰富场景','4 个步骤')}${category('full','场照全合成流程','从构思生成，到最终精修',`${data.full.length} 个步骤`)}${category('examples','使用示例图库','成片、提示词与二维码案例','17 个示例',`<span class="example-peek" aria-hidden="true"><img src="assets/example-02.jpg" alt="" width="43" height="58"><img src="assets/example-03.jpg" alt="" width="43" height="58"></span>`)}</section><p class="home-footnote">${icon('info')}点击提示词查看全文，复制后可直接使用。</p>`;
   }
   function retouch(){
     let selected=route.params.get('group')||'';
     if(!groups.includes(selected))selected='';
     const filterLink=(name,label,count)=>`<a class="filter ${selected===name?'active':''}" href="${href('oneClick',name?{group:name}:{})}" ${selected===name?'aria-current="true"':''}>${label}<span>${count}</span></a>`;
-    const filter=`<div class="filter-panel"><div class="filter-row" aria-label="精修分类">${filterLink('','全部',data.oneClick.length)}${groups.map(group=>filterLink(group,group,groupCount(group))).join('')}</div><label class="mobile-filter" for="groupSelect">精修分类<select id="groupSelect"><option value="" ${!selected?'selected':''}>全部分类（${data.oneClick.length}）</option>${groups.map(group=>`<option value="${group}" ${selected===group?'selected':''}>${group}（${groupCount(group)}）</option>`).join('')}</select></label></div>`;
+    const filter=`<div class="filter-panel"><div class="filter-row" aria-label="提示词分类">${filterLink('','全部',data.oneClick.length)}${groups.map(group=>filterLink(group,group,groupCount(group))).join('')}</div><label class="mobile-filter" for="groupSelect">提示词分类<select id="groupSelect"><option value="" ${!selected?'selected':''}>全部分类（${data.oneClick.length}）</option>${groups.map(group=>`<option value="${group}" ${selected===group?'selected':''}>${group}（${groupCount(group)}）</option>`).join('')}</select></label></div>`;
     return heading('oneClick',`<button class="button" data-copy-all="oneClick">${icon('copy')}${selected?'复制当前分类':'复制全部'}</button>`)+filter+(selected?[selected]:groups).map(group=>`<section class="prompt-group"><div class="group-heading"><h3>${icon(groupIcons[group])}${group}</h3><span>${groupCount(group)} 条提示词</span></div><div class="prompt-grid">${data.oneClick.filter(x=>x.group===group).map(x=>promptCard(byId.get(x.id))).join('')}</div></section>`).join('');
   }
   function workflow(page){
@@ -145,8 +139,9 @@
     if(route.page!=='search')lastRoute={page:route.page,params:new URLSearchParams(route.params)};
     input.value=route.page==='search'?(route.params.get('q')||''):'';
     $('clearSearch').hidden=!input.value;
-    $('navigation').innerHTML=Object.entries(sections).filter(([key])=>key!=='search').map(([key,section])=>`<a class="nav-link" href="#${key}" ${key===route.page?'aria-current="page"':''}>${icon(key)}${section.name}</a>`).join('');
-    main.innerHTML=route.page==='home'?home():route.page==='formula'?formula():route.page==='oneClick'?retouch():route.page==='examples'?gallery():route.page==='search'?searchPage():workflow(route.page);
+    $('navigation').innerHTML=Object.entries(sections).filter(([key])=>key!=='search').map(([key,section])=>`<a class="nav-link" data-section="${key}" href="#${key}" ${key===route.page?'aria-current="page"':''}><span class="nav-color" aria-hidden="true"></span>${icon(key)}${section.name}</a>`).join('');
+    main.dataset.page=route.page;
+    main.innerHTML=route.page==='home'?home():route.page==='oneClick'?retouch():route.page==='examples'?gallery():route.page==='search'?searchPage():workflow(route.page);
     document.title=route.page==='home'?'小洛后期提示词合集':`${sections[route.page].title} · 小洛后期提示词合集`;
     if(scroll){window.scrollTo({top:0,behavior:'instant'});main.classList.remove('page-enter');void main.offsetWidth;main.classList.add('page-enter');}
     syncDialog();
@@ -169,7 +164,6 @@
     }
   }
   function sectionText(page){
-    if(page==='formula')return data.formulaText;
     let records=data[page];
     const group=route.params.get('group');
     if(page==='oneClick'&&groups.includes(group))records=records.filter(item=>item.group===group);
@@ -192,6 +186,7 @@
     }
     if(openId!==id){
       openId=id;
+      dialog.dataset.section=item.section;
       $('dialogLabel').textContent=[sections[item.section].name,item.group,item.step?`第 ${item.step} 步`:null,item.tool].filter(Boolean).join(' / ');
       $('dialogTitle').textContent=item.title;
       const imageHTML=item.image?`<img class="dialog-image" src="${item.image}" alt="${escape(item.title)}">`:'';
